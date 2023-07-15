@@ -52,6 +52,34 @@ When a client sends a request to the server with a JSON payload, such as in the 
 
 Without using express.json(), the server would not automatically parse the JSON data, and you would need to manually parse it yourself using additional code.
 
+    deployed mongo db link --> 
+     https://chocolate-shark-wear.cyclic.app/
+
+
+{
+    "image":"img.jpg",
+    "title":"Shirt",
+    "mrp":123,
+    "price":100,
+    "category":"Male",
+    "rating":5,
+    "review":5
+}
+
+{
+    "name":"Md Ali",
+    "email":"ali@gmail.com",
+    "password":"12345",
+    "role":"admin"
+}
+
+
+  --> ** we need to write "Authorization" inside headers and in the value write the token for post request
+
+  to connect to mongodb atlas database use mongosh and mnngodbatlas url to connect and use the query like local mongo db by adding s in the last of collection names 
+
+  
+
 
 
 - 

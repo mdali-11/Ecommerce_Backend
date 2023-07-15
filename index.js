@@ -7,7 +7,7 @@ const {cartRouter} =require("./routes/cart.route")
 const {productRouter} = require("./routes/product.route")
 const {orderRouter} =require('./routes/order.route')
 const {adminRouter} =require("./routes/admin.route")
-const {validator} =require("./middlewares/validator.middleware")
+const {validator,productValidator} =require("./middlewares/validator.middleware")
 
 
 const app =express()
@@ -17,6 +17,7 @@ app.use(express.json())
 
 app.use("/admin",adminRouter)
 app.use("/user",userRouter)
+app.use(productValidator)
 app.use("/product",productRouter)
 app.use(validator)
 app.use("/cart",cartRouter)

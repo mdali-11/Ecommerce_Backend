@@ -20,4 +20,23 @@ const validator =(req,res,next)=>{
     }
 }
 
-module.exports={validator}
+const productValidator=(req,res,next)=>{
+    const token =req.headers.authorization
+    console.log(token)
+    if(token){
+        const decoded=jwt.verify(token,process.env.secret)
+        
+        if(decoded){
+            // console.log(decoded)
+            const userId=decoded.userId;
+            req.body.sellerID=userId;
+            next()
+        }else{
+            res.status(401).send({"msg":"please login first"})
+        }
+    }else{
+        res.status(401).send("please login first")
+    }
+}
+
+module.exports={validator,productValidator}

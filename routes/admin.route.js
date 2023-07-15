@@ -8,7 +8,7 @@ require('dotenv').config()
 
 const adminRouter =express.Router()
 
- adminRouter.post("/register",async(req,res)=>{
+ adminRouter.post("/adminSignup",async(req,res)=>{
     const {email,password,name,role} =req.body;
     // console.log(req.body)
     try{
@@ -147,7 +147,7 @@ adminRouter.get("/singleadmin/:id", async (req, res) => {
 
 // products..............................routes..for..admin...
 
-adminRouter.get("/admin/fetch",async(req,res)=>{
+adminRouter.get("/product/fetch",async(req,res)=>{
     const {sortBy,page,limit}=req.body;
     const _limit =limit||15
     const _Page =page||1
