@@ -7,7 +7,7 @@ require('dotenv').config()
 const userRouter=express.Router()
 
 userRouter.post("/register",async(req,res)=>{
-    const {email,password,name,gender,phone} =req.body;
+    const {email,password,name,gender, phone, countryCode, country} =req.body;
     // console.log(req.body)
     try{
         const user = await userModel.findOne({email})
@@ -18,7 +18,7 @@ userRouter.post("/register",async(req,res)=>{
                 if(err){
                     console.log(err)
                 }else{
-                    const user =new userModel({email,password:secure_pass,name,gender,phone})
+                    const user =new userModel({email,password:secure_pass,name,gender,phone, countryCode,country})
                     console.log(user)
                     await user.save()
                     res.send("User Registered Successfully")

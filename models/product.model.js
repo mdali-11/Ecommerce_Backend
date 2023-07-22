@@ -49,7 +49,7 @@ const productSchema = new mongoose.Schema(
     rating: { type: Number, default: 0.0, required: true },
     numReviews: { type: Number, default: 0, required: true },
     reviews: [reviewSchema],
-    sellerID:String,
+    sellerID:{type:String, required:true},
   },
   { timestamps: true }
 );

@@ -1,28 +1,28 @@
 const express = require("express");
-const { AdminModel } = require("../models/admin.model");
-const {productModel} =require("../models/product.model")
+const { AdminModel } = require("../../models/admin.model");
+const {productModel} =require("../../models/product.model")
 const jwt=require("jsonwebtoken")
 const bcrypt =require("bcrypt")
-const {userModel} =require("../models/user.model")
+const {userModel} =require("../../models/user.model")
 require('dotenv').config()
 
 const adminRouter =express.Router()
 
  adminRouter.post("/adminSignup",async(req,res)=>{
-    const {email,password,name,role} =req.body;
+    const {email,password,name, phone, countryCode, country} =req.body;
     // console.log(req.body)
     try{
-      const user = await  AdminModel.findOne({email})
-      if(user){
+      const admin = await  AdminModel.findOne({email})
+      if(admin){
         res.send("Admin Already Exists")
       }else{
         bcrypt.hash(password,5,async(err,secure_pass)=>{
           if(err){
               console.log(err)
           }else{
-              const user =new  AdminModel({email,password:secure_pass,name,role})
-              console.log(user)
-              await user.save()
+              const admin =new  AdminModel({email,password:secure_pass,name,phone,countryCode,country})
+              console.log(admin)
+              await admin.save()
               res.send("Admin Registered Succcessfully")
              
           }
@@ -39,21 +39,20 @@ const adminRouter =express.Router()
     const {email,password}=req.body
     // console.log(email,password)
     try{
-    const user = await  AdminModel.findOne({email})
-    console.log(user)
-    if(user){
+    const admin = await  AdminModel.findOne({email})
+    console.log(admin)
+    if(admin){
     const hashed_password=user.password
     // console.log(hashed_password)
     bcrypt.compare(password,hashed_password,(err,result)=>{
     if(result){
-        const token=jwt.sign({userId:user._id},process.env.secret,{expiresIn:"1hr"})
-        const User ={
-         _id:user._id,
-           name:user.name,
-          email:user.email,
-          role:user.role
+        const token=jwt.sign({adminId:admin._id},process.env.secret,{expiresIn:"1hr"})
+        const admin ={
+         _id:admin._id,
+           name:admin.name,
+          email:admin.email,
         }
-        res.send({"msg":"Login Successful","token":token,user:User})
+        res.send({"msg":"Login Successful","token":token,admin:admin})
     }else{
         res.send("wrong crendentials")
     }
