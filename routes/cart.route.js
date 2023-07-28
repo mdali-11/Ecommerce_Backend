@@ -60,7 +60,7 @@ const cartModel = require("../models/cart.model")
 const cartRouter = express.Router();
 
 // POST route to add an item to the cart or update its quantity
-cartRouter.post('/', async (req, res) => {
+cartRouter.post('/addtocart', async (req, res) => {
   const { productId } = req.body;
   const userId = req.user._id; // Assuming you have authentication middleware to set the user ID
 
@@ -112,8 +112,8 @@ cartRouter.get('/', async (req, res) => {
 });
 
 // PUT route to update the quantity of a specific item in the cart
-cartRouter.put('/:itemId', async (req, res) => {
-  const { itemId } = req.params;
+cartRouter.put('/:id', async (req, res) => {
+  const { id } = req.params;
   const { quantity } = req.body;
   const userId = req.user._id; // Assuming you have authentication middleware to set the user ID
 
@@ -124,7 +124,7 @@ cartRouter.put('/:itemId', async (req, res) => {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
-    const itemToUpdate = cart.items.find((item) => item._id.toString() === itemId);
+    const itemToUpdate = cart.items.find((item) => item._id.toString() === id);
 
     if (!itemToUpdate) {
       return res.status(404).json({ message: 'Item not found in cart' });
@@ -141,8 +141,8 @@ cartRouter.put('/:itemId', async (req, res) => {
 });
 
 // DELETE route to remove an item from the cart
-cartRouter.delete('/:itemId', async (req, res) => {
-  const { itemId } = req.params;
+cartRouter.delete('/:id', async (req, res) => {
+  const { id } = req.params;
   const userId = req.user._id; // Assuming you have authentication middleware to set the user ID
 
   try {
@@ -152,7 +152,7 @@ cartRouter.delete('/:itemId', async (req, res) => {
       return res.status(404).json({ message: 'Cart not found' });
     }
 
-    cart.items = cart.items.filter((item) => item._id.toString() !== itemId);
+    cart.items = cart.items.filter((item) => item._id.toString() !== id);
 
     const updatedCart = await cart.save();
     res.status(200).json(updatedCart);
