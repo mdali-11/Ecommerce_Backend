@@ -2,16 +2,39 @@
 const express=require("express")
 const expressAsyncHandler =require('express-async-handler');
 const {productModel}=require("../../models/product.model")
-import { productValidator } from "../../middlewares/productValidator.middleware";
+// import { productValidator } from "../../middlewares/productValidator.middleware";
 
 // meed to use middlewares for isAuth and isAdmin
+
+const productValidator=(req,res,next)=>{
+
+  if(req.method!==get){
+  const token =req.headers.authorization
+  console.log(token)
+  if(token){
+      const decoded=jwt.verify(token,process.env.secret)
+      if(decoded){
+          // console.log(decoded)
+          const userId=decoded.userId;
+          req.body.sellerID=userId;
+          next()
+      }else{
+          res.status(401).send({"msg":"please login first"})
+      }
+  }else{
+      res.status(401).send("please login first")
+  }
+}else{
+  next();
+}
+}
 
 const adminProductRouter = express.Router();
 
 adminProductRouter.use(productValidator)
 
 adminProductRouter.post(
-    '/',
+    '/add',
     expressAsyncHandler(async (req, res) => {
   
       const { title, description, category, brand, image, price, countInStock, sellerID } = req.body;
