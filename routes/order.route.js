@@ -174,7 +174,7 @@
 //       order.payment.paymentResult = {
 //         payerID: req.body.payerID,
 //         paymentID: req.body.paymentID,
-//         orderID: req.body.orderID,
+//         id: req.body.id,
 //       };
 //       const updatedOrder = await order.save();
 //       res.send({ message: 'Order Paid', order: updatedOrder });
@@ -211,7 +211,7 @@ const cartModel = require("../models/cart.model")
 const orderRouter = express.Router();
 
 // Create an order
-orderRouter.post('/', async (req, res) => {
+orderRouter.post('/add', async (req, res) => {
   const { user, shipping, paymentMethod } = req.body;
   const userId = req.user._id; // Assuming you have authentication middleware to set the user ID
 
@@ -271,11 +271,11 @@ orderRouter.get('/', async (req, res) => {
 });
 
 // Get a specific order by ID
-orderRouter.get('/:orderId', async (req, res) => {
-  const { orderId } = req.params;
+orderRouter.get('/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const order = await orderModel.findById(orderId)
+    const order = await orderModel.findById(id)
       .populate('user', 'name email')
       .populate('orderItems.product', 'title price image');
 
@@ -291,11 +291,11 @@ orderRouter.get('/:orderId', async (req, res) => {
 });
 
 // Delete an order by ID
-orderRouter.delete('/:orderId', async (req, res) => {
-  const { orderId } = req.params;
+orderRouter.delete('/:id', async (req, res) => {
+  const { id } = req.params;
 
   try {
-    const deletedOrder = await orderModel.findByIdAndDelete(orderId);
+    const deletedOrder = await orderModel.findByIdAndDelete(id);
 
     if (!deletedOrder) {
       return res.status(404).json({ message: 'Order not found' });
