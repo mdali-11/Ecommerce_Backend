@@ -62,7 +62,7 @@ const cartRouter = express.Router();
 // POST route to add an item to the cart or update its quantity
 cartRouter.post('/addtocart', async (req, res) => {
   const { productId } = req.body;
-  const userId = req.body.user._id; // Assuming you have authentication middleware to set the user ID
+  const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
 
   try {
     let cart = await cartModel.findOne({ user: userId });
@@ -98,7 +98,7 @@ cartRouter.post('/addtocart', async (req, res) => {
 
 // GET route to retrieve the user's cart
 cartRouter.get('/', async (req, res) => {
-  const userId = req.body.user._id; // Assuming you have authentication middleware to set the user ID
+  const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
 
   try {
     const cart = await cartModel.findOne({ user: userId })
@@ -115,7 +115,7 @@ cartRouter.get('/', async (req, res) => {
 cartRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
-  const userId = req.body.user._id; // Assuming you have authentication middleware to set the user ID
+  const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
 
   try {
     const cart = await cartModel.findOne({ user: userId });
@@ -143,7 +143,7 @@ cartRouter.put('/:id', async (req, res) => {
 // DELETE route to remove an item from the cart
 cartRouter.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const userId = req.body.user._id; // Assuming you have authentication middleware to set the user ID
+  const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
 
   try {
     const cart = await cartModel.findOne({ user: userId });
