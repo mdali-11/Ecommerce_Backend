@@ -55,44 +55,47 @@
 
 
 const express = require('express');
-const cartModel = require("../models/cart.model")
+const {cartModel} = require("../models/cart.model")
 
 const cartRouter = express.Router();
 
 // POST route to add an item to the cart or update its quantity
 cartRouter.post('/addtocart', async (req, res) => {
   const { productId } = req.body;
-  const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
+  const {userId} = req.body;
+  const {quantity}=req.body || 1;
+  console.log("checkdata", productId, userId) // Assuming you have authentication middleware to set the user ID
 
   try {
     let cart = await cartModel.findOne({ user: userId });
-
+    console.log("cart", cart)
     if (!cart) {
       // Create a new cart if it doesn't exist for the user
       cart = new cartModel({
         user: userId,
-        items: [{ product: productId }],
+        items: [{ product: productId , quantity:quantity }],
       });
     } else {
       // Check if the product already exists in the cart
       const existingItem = cart.items.find(
         (item) => item.product.toString() === productId
       );
+      console.log("existing items", existingItem)
 
       if (existingItem) {
         // Update the quantity if the product already exists
-        existingItem.quantity = quantity;
+        // existingItem.quantity=quantity;
+    res.status(201).send({message:"Product already added to cart"});
       } else {
         // Add a new item if the product doesn't exist
-        cart.items.push({ product: productId, quantity });
+        cart.items.push({ product: productId,quantity:quantity });
+        const updatedCart = await cart.save();
+        res.status(201).send(updatedCart);
       }
-    }
-
-    const updatedCart = await cart.save();
-    res.status(201).json(updatedCart);
+    }   
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'An error occurred' });
+    res.status(500).send({ message: 'An error occurred' });
   }
 });
 
@@ -102,12 +105,12 @@ cartRouter.get('/', async (req, res) => {
 
   try {
     const cart = await cartModel.findOne({ user: userId })
-      .populate('items.product', 'title price'); // Populate the product details
+      .populate('items.product', 'title price image'); // Populate the product details
 
-    res.status(200).json(cart);
+    res.status(200).send(cart);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'An error occurred' });
+    res.status(500).send({ message: 'An error occurred' });
   }
 });
 
@@ -121,22 +124,22 @@ cartRouter.put('/:id', async (req, res) => {
     const cart = await cartModel.findOne({ user: userId });
 
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).send({ message: 'Your cart is Empty' });
     }
 
     const itemToUpdate = cart.items.find((item) => item._id.toString() === id);
 
     if (!itemToUpdate) {
-      return res.status(404).json({ message: 'Item not found in cart' });
+      return res.status(404).send({ message: 'Item not found in cart' });
     }
 
     itemToUpdate.quantity = quantity;
 
     const updatedCart = await cart.save();
-    res.status(200).json(updatedCart);
+    res.status(200).send(updatedCart);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'An error occurred' });
+    res.status(500).send({ message: 'An error occurred' });
   }
 });
 
@@ -149,17 +152,61 @@ cartRouter.delete('/:id', async (req, res) => {
     const cart = await cartModel.findOne({ user: userId });
 
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).send({ message: 'Cart not found' });
     }
 
     cart.items = cart.items.filter((item) => item._id.toString() !== id);
 
     const updatedCart = await cart.save();
-    res.status(200).json(updatedCart);
+    res.status(200).send(updatedCart);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'An error occurred' });
+    res.status(500).send({ message: 'An error occurred' });
   }
 });
 
 module.exports = {cartRouter};
+
+// notesRouter.patch("/update/:id", async(req,res)=>{
+
+//   const payload=req.body;
+//   const id=req.params.id;
+//   const note=await notesModel.findOne({"_id":id})
+//   const userID_in_note=note.userID
+//   const userID_making_request=req.body.userID;
+
+//   try{
+//       if(userID_making_request!==userID_in_note){
+//           res.send("You are not authorized")
+//       }else{
+//           await notesModel.findByIdAndUpdate({"_id":id},payload)
+//           res.send("Updated the note")
+//       }
+
+//   }catch(err){
+//       console.log(err)
+//       res.send({"msg":"soething went wrong"})
+//   }
+// })
+
+// notesRouter.delete("/delete/:id", async(req,res) => {
+
+//   const id=req.params.id;
+//   const note=await notesModel.findOne({"_id":id})
+//   const userID_in_note=note.userID
+//   const userID_making_request=req.body.userID;
+
+//   try{
+//       if(userID_making_request!==userID_in_note){
+//           res.send("You are not authorized")
+//       }else{
+//           await notesModel.findByIdAndDelete({"_id":id})
+//           res.send("Deleted the note")
+//       }
+
+//   }catch(err){
+//       console.log(err)
+//       res.send({"msg":"soething went wrong"})
+//   }
+
+// })

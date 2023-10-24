@@ -43,7 +43,7 @@ userRouter.post("/login",async (req,res)=>{
     // console.log(hashed_password)
     bcrypt.compare(password,hashed_password,(err,result)=>{
     if(result){
-        const token=jwt.sign({userId:user._id},process.env.secret,{expiresIn:"1hr"})
+        const token=jwt.sign({userId:user._id},process.env.secret,{expiresIn:"24hr"})
         const User ={
          _id:user._id,
            name:user.name,
