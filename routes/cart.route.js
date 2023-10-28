@@ -73,7 +73,7 @@ cartRouter.post('/addtocart', async (req, res) => {
       // Create a new cart if it doesn't exist for the user
       cart = new cartModel({
         user: userId,
-        items: [{ product: productId , quantity:quantity }],
+        items: [{ productId: productId , quantity:quantity }],
       });
     } else {
       // Check if the product already exists in the cart
@@ -119,7 +119,7 @@ cartRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
   const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
-
+  // console.log(userId)
   try {
     const cart = await cartModel.findOne({ user: userId });
 
@@ -127,8 +127,7 @@ cartRouter.put('/:id', async (req, res) => {
       return res.status(404).send({ message: 'Your cart is Empty' });
     }
 
-    const itemToUpdate = cart.items.find((item) => item._id.toString() === id);
-
+    const itemToUpdate = cart.items.find((item) => item.productId.toString() === id);
     if (!itemToUpdate) {
       return res.status(404).send({ message: 'Item not found in cart' });
     }
@@ -153,12 +152,21 @@ cartRouter.delete('/:id', async (req, res) => {
 
     if (!cart) {
       return res.status(404).send({ message: 'Cart not found' });
-    }
+    }else{
+      const itemExists = cart.items.some((item) => item.productId.toString() === id);
 
-    cart.items = cart.items.filter((item) => item._id.toString() !== id);
-
+    await cartModel.updateOne(
+      { _id: cart._id },
+      { $pull: { items: { "product": id } } }
+    );
+  }       
+  
+    // cart.items = cart.items.filter((item) => item.product.toString() !== id);
+    // cart.items.findByIdAndDelete({"product":id})
+   
     const updatedCart = await cart.save();
-    res.status(200).send(updatedCart);
+    res.status(200).send({message:"Product Deleted Successfully", 
+  cart:updatedCart});
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: 'An error occurred' });

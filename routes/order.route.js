@@ -213,7 +213,7 @@ const orderRouter = express.Router();
 // Create an order
 orderRouter.post('/add', async (req, res) => {
   const { user, shipping, paymentMethod } = req.body;
-  const userId = req.user._id; // Assuming you have authentication middleware to set the user ID
+  const {userId} = req.body; // Assuming you have authentication middleware to set the user ID
 
   try {
     const cart = await cartModel.findOne({ user: userId }).populate('items.product', 'title price');
